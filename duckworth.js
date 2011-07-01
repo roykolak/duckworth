@@ -7,6 +7,12 @@ var Bot = require('./bot'),
 var duckworth = new Bot(config.key, config.group, config.room);
 duckworth.start();
 
+duckworth.addObserver({
+  matcher: new RegExp('oh no', 'i'),
+  action: function(message, room) {
+    duckworth.speak('http://www.x-entertainment.com/pics/kool1.jpg', room);
+  }
+});
 
 duckworth.addResponse({
   help:'announce "something"',

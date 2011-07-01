@@ -5,7 +5,7 @@ var request = require('./requests'),
 
 module.exports = function Bot(apiKey, group, roomToJoin) {
   var auth = 'Basic ' + new Buffer(apiKey + ':X').toString('base64');
-  var responses = [];
+  var responses = [], observers = [];
 
   function buildOptions(config) {
     var options = {
@@ -47,6 +47,7 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
               if (data[i].trim() !== '') {
                 try {
                   self.matchMessage(JSON.parse(data[i]), room);
+                  self.matchObserver(JSON.parse(data[i]), room);
                 } catch(e) {}
               }
             }
@@ -57,6 +58,10 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
 
     addResponse: function(response) {
       responses.push(response);
+    },
+
+    addObserver: function(observer) {
+      observers.push(observer);
     },
 
     matchMessage: function(message, room) {
@@ -78,6 +83,14 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
           this.speak(help, room, 'PasteMessage');
         }
       }
+    },
+
+    matchObserver: function(message, room) {
+      observers.forEach(function(observer) {
+        if(message.body.match(observer.matcher)) {
+          observer.action(message, room);
+        }
+      });
     },
 
     speak: function(text, room, type) {
