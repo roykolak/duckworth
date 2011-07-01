@@ -18,6 +18,14 @@ duckworth.addResponse({
 });
 
 duckworth.addResponse({
+  help: 'back me up',
+  matcher: new RegExp('back me up', 'i'),
+  action: function(message, room) {
+    duckworth.speak('Excuse my interjection, but I must say that is a valid and exquisite point.', room);
+  }
+});
+
+duckworth.addResponse({
   help:"coin toss",
   matcher: new RegExp('coin toss', 'i'),
   action: function(message, room) {
