@@ -7,6 +7,15 @@ var Bot = require('./bot'),
 var duckworth = new Bot(config.key, config.group, config.room);
 duckworth.start();
 
+duckworth.addTask({
+  action: function(room) {
+    var time = new Date();
+    if(time.getMinutes() === 0) {
+      duckworth.speak("The time is now " + time.getHours() + ' o\'clock.');
+    }
+  }
+});
+
 duckworth.addObserver({
   matcher: new RegExp('oh no', 'i'),
   action: function(message, room) {

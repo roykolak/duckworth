@@ -5,7 +5,7 @@ var request = require('./requests'),
 
 module.exports = function Bot(apiKey, group, roomToJoin) {
   var auth = 'Basic ' + new Buffer(apiKey + ':X').toString('base64');
-  var responses = [], observers = [];
+  var tasks = [], responses = [], observers = [];
 
   function buildOptions(config) {
     var options = {
@@ -32,8 +32,13 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
   return {
     start: function() {
       var self = this;
+
       request.secureGet(url.getRooms, function (data) {
         var room = JSON.parse(data).rooms[roomToJoin];
+        setInterval(function() {
+          self.matchTask(room);
+        }, 45000);
+
         request.post(url.joinRoom(room), null, function(data) {
           request.secureGet(url.stream(room), function(data) {
             // https://github.com/tristandunn/node-campfire/
@@ -64,6 +69,10 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
       observers.push(observer);
     },
 
+    addTask: function(task) {
+      tasks.push(task);
+    },
+
     matchMessage: function(message, room) {
       if(message.body.match(/duckworth:/i)) {
         var hit = false;
@@ -90,6 +99,12 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
         if(message.body.match(observer.matcher)) {
           observer.action(message, room);
         }
+      });
+    },
+
+    matchTask: function(message, room) {
+      tasks.forEach(function(task) {
+        task.action(message, room);
       });
     },
 
