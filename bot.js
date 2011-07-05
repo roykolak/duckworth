@@ -102,9 +102,9 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
       });
     },
 
-    matchTask: function(message, room) {
+    matchTask: function(room) {
       tasks.forEach(function(task) {
-        task.action(message, room);
+        task.action(room);
       });
     },
 

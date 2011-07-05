@@ -9,9 +9,14 @@ duckworth.start();
 
 duckworth.addTask({
   action: function(room) {
+    function convertToStandardTime(militaryHours) {
+      var standardHours = militaryHours + 1;
+      return (standardHours >= 13 ? standardHours - 12 : standardHours);
+    }
+
     var time = new Date();
     if(time.getMinutes() === 0) {
-      duckworth.speak("The time is now " + time.getHours() + ' o\'clock.');
+      duckworth.speak("The time is now " + convertToStandardTime(time.getHours()) + ' o\'clock.', room);
     }
   }
 });
