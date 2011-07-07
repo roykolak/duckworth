@@ -1,7 +1,8 @@
 require('./config');
-var Bot = require('./bot'),
-    xml2js = require('xml2js'),
-    request = require('./requests'),
+require('./request');
+require('./bot');
+
+var xml2js = require('xml2js'),
     exec = require('child_process').exec;
 
 var duckworth = new Bot(config.key, config.group, config.room);
@@ -10,8 +11,11 @@ duckworth.start();
 duckworth.addTask({
   action: function(room) {
     function convertToStandardTime(militaryHours) {
-      var standardHours = militaryHours + 1;
-      return (standardHours >= 13 ? standardHours - 12 : standardHours);
+      if(militaryHours === 0) {
+        return 12;
+      } else {
+        return (militaryHours > 12 ? militaryHours - 12 : militaryHours);
+      }
     }
 
     var time = new Date();
@@ -59,7 +63,7 @@ duckworth.addResponse({
   matcher: new RegExp('forecast', 'i'),
   action:function(message, room) {
     var city = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0].replace(/"/g,'');
-    request.get({host: 'www.google.com', path:'/ig/api?weather=' + city}, function(data) {
+    Request.get({host: 'www.google.com', path:'/ig/api?weather=' + city}, function(data) {
       var forecast = "",
           parser = new xml2js.Parser();
       parser.addListener('end', function(result) {
@@ -96,7 +100,7 @@ duckworth.addResponse({
       done();
     }
 
-    request.get({host: 'builder.research', path: '/api/json'}, function(data) {
+    Request.get({host: 'builder.research', path: '/api/json'}, function(data) {
       results.builder1 = true;
       parseResults(data);
     });
@@ -114,7 +118,7 @@ duckworth.addResponse({
   matcher: new RegExp('stock', 'i'),
   action: function(message, room) {
     var stock = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0].replace(/"/g,'');
-    request.get({host:'www.google.com', path:'/ig/api?stock=' + stock}, function(data) {
+    Request.get({host:'www.google.com', path:'/ig/api?stock=' + stock}, function(data) {
       var quote = '',
           parser = new xml2js.Parser();
       parser.addListener('end', function(result) {

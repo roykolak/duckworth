@@ -1,7 +1,8 @@
 var https = require('https'),
     http = require('http');
 
-  exports.get = function(options, callback) {
+Request = {
+  get: function(options, callback) {
     http.get(options, function(res) {
       res.setEncoding('utf8');
       res.on('data', function(chunk) {
@@ -10,9 +11,9 @@ var https = require('https'),
     }).on('error', function(e) {
       console.error(e);
     });
-  };
+  },
 
-  exports.secureGet = function(options, callback) {
+  secureGet: function(options, callback) {
     https.get(options, function(res) {
       res.setEncoding('utf8');
       res.on('data', function(chunk) {
@@ -21,9 +22,9 @@ var https = require('https'),
     }).on('error', function(e) {
       console.error(e);
     });
-  };
+  },
 
-  exports.post = function(options, payload, callback) {
+  post: function(options, payload, callback) {
     options.method = 'POST';
     options.headers['content-length'] = (payload === null ? 0 : payload.length);
     options.headers['content-type'] = 'application/json';
@@ -39,4 +40,5 @@ var https = require('https'),
       req.write(payload);
     }
     req.end();
-  };
+  }
+};

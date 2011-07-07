@@ -1,9 +1,8 @@
-var request = require('./requests'),
-    sys = require('sys'),
+var sys = require('sys'),
     xml2js = require('xml2js'),
     child;
 
-module.exports = function Bot(apiKey, group, roomToJoin) {
+Bot = function Bot(apiKey, group, roomToJoin) {
   var auth = 'Basic ' + new Buffer(apiKey + ':X').toString('base64');
   var tasks = [], responses = [], observers = [];
 
@@ -33,14 +32,14 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
     start: function() {
       var self = this;
 
-      request.secureGet(url.getRooms, function (data) {
+      Request.secureGet(url.getRooms, function (data) {
         var room = JSON.parse(data).rooms[roomToJoin];
         setInterval(function() {
           self.matchTask(room);
         }, 45000);
 
-        request.post(url.joinRoom(room), null, function(data) {
-          request.secureGet(url.stream(room), function(data) {
+        Request.post(url.joinRoom(room), null, function(data) {
+          Request.secureGet(url.stream(room), function(data) {
             // https://github.com/tristandunn/node-campfire/
             if (data.trim() === '') {
               return;
@@ -110,7 +109,7 @@ module.exports = function Bot(apiKey, group, roomToJoin) {
 
     speak: function(text, room, type) {
       var message = JSON.stringify({message:{type:type || 'TextMessage', body:text}});
-      request.post(url.postMessage(room), message, function(data) {});
+      Request.post(url.postMessage(room), message, function(data) {});
     }
   };
 }
