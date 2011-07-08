@@ -32,6 +32,23 @@ duckworth.addObserver({
   }
 });
 
+duckworth.addObserver({
+  matcher: new RegExp(/#\d+/),
+  action: function(message, room) {
+    var ticket = message.body.match(/#(\d+)/)[1],
+        requestParams = {
+          host: 'projects.research',
+          path:'/issues/' + ticket + '.json?key=' + config.redmineKey
+        };
+
+    Request.get(requestParams, function(data) {
+      var issue = JSON.parse(data).issue;
+      duckworth.speak('#' + ticket + ': ' + issue.subject + ' [' + issue.project.name + ']', room);
+      duckworth.speak('http://projects.research/issues/' + ticket, room);
+    });
+  }
+});
+
 duckworth.addResponse({
   help:'announce "something"',
   matcher: new RegExp('announce', 'i'),
