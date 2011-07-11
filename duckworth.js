@@ -43,7 +43,7 @@ duckworth.addObserver({
 
     Request.get(requestParams, function(data) {
       var issue = JSON.parse(data).issue;
-      duckworth.speak('#' + ticket + ': ' + issue.subject + ' [' + issue.project.name + ']', room);
+      duckworth.speak(ticket + ': ' + issue.subject + ' [' + issue.project.name + ']', room);
       duckworth.speak('http://projects.research/issues/' + ticket, room);
     });
   }
