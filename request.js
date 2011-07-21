@@ -13,7 +13,7 @@ Request = {
     });
   },
 
-  secureGet: function(options, callback) {
+  secureGet: function(options, callback, endCallback) {
     https.get(options, function(res) {
       res.setEncoding('utf8');
       res.on('data', function(chunk) {
@@ -21,6 +21,8 @@ Request = {
       });
     }).on('error', function(e) {
       console.error(e);
+    }).on('end', function(e) {
+      endCallback();
     });
   },
 

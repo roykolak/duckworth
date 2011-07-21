@@ -34,28 +34,36 @@ Bot = function Bot(apiKey, group, roomToJoin) {
 
       Request.secureGet(url.getRooms, function (data) {
         var room = JSON.parse(data).rooms[roomToJoin];
+
         setInterval(function() {
           self.matchTask(room);
         }, 45000);
 
-        Request.post(url.joinRoom(room), null, function(data) {
-          Request.secureGet(url.stream(room), function(data) {
-            // https://github.com/tristandunn/node-campfire/
-            if (data.trim() === '') {
-              return;
-            }
+        self.streamRoom(room);
+      });
+    },
 
-            data = data.split("\r");
+    streamRoom: function(room) {
+      var self = this;
+      Request.post(url.joinRoom(room), null, function(data) {
+        Request.secureGet(url.stream(room), function(data) {
+          // https://github.com/tristandunn/node-campfire/
+          if (data.trim() === '') {
+            return;
+          }
 
-            for (var i = 0; i < data.length; ++i) {
-              if (data[i].trim() !== '') {
-                try {
-                  self.matchMessage(JSON.parse(data[i]), room);
-                  self.matchObserver(JSON.parse(data[i]), room);
-                } catch(e) {}
-              }
+          data = data.split("\r");
+
+          for (var i = 0; i < data.length; ++i) {
+            if (data[i].trim() !== '') {
+              try {
+                self.matchMessage(JSON.parse(data[i]), room);
+                self.matchObserver(JSON.parse(data[i]), room);
+              } catch(e) {}
             }
-          });
+          }
+        }, function() {
+          self.streamRoom(room);
         });
       });
     },
