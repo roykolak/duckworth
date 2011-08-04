@@ -17,12 +17,16 @@ Request = {
     https.get(options, function(res) {
       res.setEncoding('utf8');
       res.on('data', function(chunk) {
+        console.log('data');
         callback(chunk);
       });
     }).on('error', function(e) {
       console.error(e);
     }).on('end', function(e) {
+      console.log('end');
       endCallback();
+    }).on('close', function(e) {
+      console.log('close');
     });
   },
 

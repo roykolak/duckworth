@@ -28,7 +28,7 @@ duckworth.addTask({
 duckworth.addObserver({
   matcher: new RegExp('oh no', 'i'),
   action: function(message, room) {
-    duckworth.speak('http://www.x-entertainment.com/pics/kool1.jpg', room);
+    room.speak('http://www.x-entertainment.com/pics/kool1.jpg');
   }
 });
 
@@ -43,8 +43,8 @@ duckworth.addObserver({
 
     Request.get(requestParams, function(data) {
       var issue = JSON.parse(data).issue;
-      duckworth.speak(ticket + ': ' + issue.subject + ' [' + issue.project.name + ']', room);
-      duckworth.speak('http://projects.research/issues/' + ticket, room);
+      room.speak(ticket + ': ' + issue.subject + ' [' + issue.project.name + ']');
+      room.speak('http://projects.research/issues/' + ticket);
     });
   }
 });
@@ -62,7 +62,7 @@ duckworth.addResponse({
   help: 'back me up',
   matcher: new RegExp('back me up', 'i'),
   action: function(message, room) {
-    duckworth.speak('Excuse my interjection, but I must say that is a valid and exquisite point.', room);
+    room.speak('Excuse my interjection, but I must say that is a valid and exquisite point.');
   }
 });
 
@@ -71,7 +71,7 @@ duckworth.addResponse({
   matcher: new RegExp('coin toss', 'i'),
   action: function(message, room) {
     var side = (Math.floor(Math.random()*2) == 1 ? 'Heads' : 'Tails');
-    duckworth.speak(side + ' is the result Sir.', room);
+    room.speak(side + ' is the result Sir.');
   }
 });
 
@@ -89,7 +89,7 @@ duckworth.addResponse({
           forecast += day.low['@'].data + "/" + day.high['@'].data + " with ";
           forecast += day.condition['@'].data + "\n\n";
         });
-        duckworth.speak(forecast, room, 'PasteMessage');
+        room.paste(forecast);
       });
       parser.parseString(data);
     });
@@ -105,7 +105,7 @@ duckworth.addResponse({
 
     function done() {
       if(results.builder1 && results.builder2) {
-        duckworth.speak(status, room, 'PasteMessage');
+        room.paste(status);
       }
     }
 
@@ -140,7 +140,7 @@ duckworth.addResponse({
           parser = new xml2js.Parser();
       parser.addListener('end', function(result) {
         quote = result.finance.company['@'].data + '\n' + result.finance.last['@'].data;
-        duckworth.speak(quote, room, 'PasteMessage');
+        room.speak(quote);
       });
       parser.parseString(data);
     });
@@ -151,7 +151,7 @@ duckworth.addResponse({
   help:"",
   matcher: new RegExp('hello', 'i'),
   action: function(message, room) {
-    duckworth.speak("Hello sir, how many I be of service?", room);
+    room.speak("Hello sir, how many I be of service?");
   }
 });
 
@@ -159,6 +159,6 @@ duckworth.addResponse({
   help: "",
   matcher: new RegExp('thanks', 'i'),
   action: function(message, room) {
-    duckworth.speak("My duty is to serve you sir.", room);
+    room.speak("My duty is to serve you sir.");
   }
 });
