@@ -1,5 +1,12 @@
+// Array Remove - By John Resig (MIT Licensed)
+ Array.prototype.remove = function(from, to) {
+   var rest = this.slice((to || from) + 1 || this.length);
+   this.length = from < 0 ? this.length + from : from;
+   return this.push.apply(this, rest);
+};
+
 Bot = function Bot(apiKey, group, roomToJoin) {
-  var tasks = [], responses = [], observers = [];
+  var tasks = [], responses = [], observers = [], alarms = [];
   var client;
 
   function assembleHelp() {
@@ -22,8 +29,12 @@ Bot = function Bot(apiKey, group, roomToJoin) {
               self.matchTask(room);
             }, 50000);
 
+            //setInterval(function() {
+              //self.matchAlarm(room);
+            //}, 30000);
+
             room.listen(function(message) {
-              if(message.body.length !== 0) {
+              if(message.body !== null) {
                 self.matchMessage(message, room);
                 self.matchObserver(message, room);
               }
@@ -43,6 +54,10 @@ Bot = function Bot(apiKey, group, roomToJoin) {
 
     addTask: function(task) {
       tasks.push(task);
+    },
+
+    addAlarm: function(alarm) {
+      alarms.push(alarm);
     },
 
     matchMessage: function(message, room) {
@@ -74,6 +89,33 @@ Bot = function Bot(apiKey, group, roomToJoin) {
       tasks.forEach(function(task) {
         task.action(room);
       });
+    },
+
+    matchAlarm: function(room) {
+      var expiredAlaramIndices = [];
+      var time = new Date();
+
+      var hour = time.getHours(),
+          minute = time.getMinutes();
+
+      alarms.forEach(function(alarm, index) {
+        if(hour == alarm.time.getHours() && minute == alarm.time.getMinutes()) {
+          client.user(alarm.user, function(user) {
+            room.speak(user.name + ' this is your alarm Sir.');
+            expiredAlaramIndices.push(index);
+            console.log(expiredAlaramIndices);
+          });
+        }
+      });
+
+      console.log('before:');
+      console.log(alarms);
+      console.log(expiredAlaramIndices);
+      for(var i = expiredAlaramIndices.length; i > 0; i--) {
+        alarms.remove(expiredAlarmsIndices[i]);
+      }
+      console.log('after:');
+      console.log(alarms);
     }
-  };
+};
 }

@@ -33,6 +33,13 @@ duckworth.addObserver({
 });
 
 duckworth.addObserver({
+  matcher: new RegExp('chipotle', 'i'),
+  action: function(message, room) {
+    room.speak('I must say that Chipotle is an excellent suggestion. Aces full Sirs.');
+  }
+});
+
+duckworth.addObserver({
   matcher: new RegExp(/#\d+/),
   action: function(message, room) {
     var ticket = message.body.match(/#(\d+)/)[1],
@@ -55,6 +62,46 @@ duckworth.addResponse({
   action: function(message, room) {
     var sayThis = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0];
     exec('say ' + sayThis);
+  }
+});
+
+//duckworth.addResponse({
+  //help:'set alarm for "14:00"',
+  //matcher: new RegExp('set alarm for', 'i'),
+  //action: function(message, room) {
+    //var alarm = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0].replace(/"/g,'');
+    //duckworth.addAlarm({
+      //user: message.userId,
+      //time: new Date(new Date().toLocaleDateString() + ' ' + alarm)
+    //});
+    //room.speak("Go about your business; I shall alert you then Sir.");
+  //}
+//});
+
+duckworth.addResponse({
+  help:'lockdown',
+  matcher: new RegExp('lockdown', 'i'),
+  action: function(message, room) {
+    room.lock();
+    room.speak('Perimeter secured Sir.');
+  }
+});
+
+duckworth.addResponse({
+  help:'disarm',
+  matcher: new RegExp('disarm', 'i'),
+  action: function(message, room) {
+    room.unlock();
+    room.speak('Standing down Sir.');
+  }
+});
+
+duckworth.addResponse({
+  help:'topic "new topic"',
+  matcher: new RegExp('topic', 'i'),
+  action: function(message, room) {
+    var topic = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0].replace(/"/g,'');
+    room.update({topic: topic});
   }
 });
 
