@@ -1,5 +1,5 @@
 config = {
-  key: 'apikey',
-  group: 'the host'
+  key: '<apikey>',
+  group: '<sub domain>'
 };
 
