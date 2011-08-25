@@ -1,6 +1,5 @@
 config = {
   key: 'apikey',
-  group: 'the host',
-  room: 1
+  group: 'the host'
 };
 

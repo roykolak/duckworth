@@ -6,7 +6,7 @@ require('./bot');
 var xml2js = require('xml2js'),
     exec = require('child_process').exec;
 
-var duckworth = new Bot(config.key, config.group, config.room);
+var duckworth = new Bot(config.key, config.group);
 duckworth.start();
 
 duckworth.addTask({

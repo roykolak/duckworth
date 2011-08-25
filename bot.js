@@ -1,4 +1,4 @@
-Bot = function Bot(apiKey, group, roomToJoin) {
+Bot = function Bot(apiKey, group) {
   var tasks = [], responses = [], observers = [];
   var client;
 
