@@ -1,4 +1,5 @@
 require('./config');
+require('./helpers');
 require('./request');
 require('./bot');
 
@@ -26,7 +27,7 @@ duckworth.addTask({
 });
 
 duckworth.addObserver({
-  matcher: new RegExp('oh no', 'i'),
+  matcher: /oh no/i,
   action: function(message, room) {
     room.speak('http://www.x-entertainment.com/pics/kool1.jpg');
   }
