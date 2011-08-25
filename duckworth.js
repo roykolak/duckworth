@@ -1,6 +1,5 @@
 require('./config');
 require('./helpers');
-require('./request');
 require('./bot');
 
 var xml2js = require('xml2js'),
@@ -9,7 +8,7 @@ var xml2js = require('xml2js'),
 var duckworth = new Bot(config.key, config.group);
 duckworth.start();
 
-duckworth.addTask({
+duckworth.addPerformer({
   action: function(room) {
     function convertToStandardTime(militaryHours) {
       if(militaryHours === 0) {
@@ -34,14 +33,14 @@ duckworth.addObserver({
 });
 
 duckworth.addObserver({
-  matcher: new RegExp('chipotle', 'i'),
+  matcher: /chipotle/i,
   action: function(message, room) {
     room.speak('I must say that Chipotle is an excellent suggestion. Aces full Sirs.');
   }
 });
 
 duckworth.addObserver({
-  matcher: new RegExp(/#\d+/),
+  matcher: /#\d+/,
   action: function(message, room) {
     var ticket = message.body.match(/#(\d+)/)[1],
         requestParams = {
@@ -57,75 +56,62 @@ duckworth.addObserver({
   }
 });
 
-duckworth.addResponse({
-  help:'announce "something"',
-  matcher: new RegExp('announce', 'i'),
+duckworth.addResponder({
+  help:'say "something"',
+  matcher: /say/i,
   action: function(message, room) {
     var sayThis = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0];
     exec('say ' + sayThis);
   }
 });
 
-//duckworth.addResponse({
-  //help:'set alarm for "14:00"',
-  //matcher: new RegExp('set alarm for', 'i'),
-  //action: function(message, room) {
-    //var alarm = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0].replace(/"/g,'');
-    //duckworth.addAlarm({
-      //user: message.userId,
-      //time: new Date(new Date().toLocaleDateString() + ' ' + alarm)
-    //});
-    //room.speak("Go about your business; I shall alert you then Sir.");
-  //}
-//});
-
-duckworth.addResponse({
+duckworth.addResponder({
   help:'lockdown',
-  matcher: new RegExp('lockdown', 'i'),
+  matcher: /lockdown/i,
   action: function(message, room) {
     room.lock();
     room.speak('Perimeter secured Sir.');
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help:'disarm',
-  matcher: new RegExp('disarm', 'i'),
+  matcher: /disarm/i,
   action: function(message, room) {
     room.unlock();
     room.speak('Standing down Sir.');
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help:'topic "new topic"',
-  matcher: new RegExp('topic', 'i'),
+  matcher: /topic/i,
   action: function(message, room) {
     var topic = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0].replace(/"/g,'');
     room.update({topic: topic});
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help: 'back me up',
-  matcher: new RegExp('back me up', 'i'),
+  matcher: /back me up/i,
   action: function(message, room) {
     room.speak('Excuse my interjection, but I must say that is a valid and exquisite point.');
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help:"coin toss",
-  matcher: new RegExp('coin toss', 'i'),
+  matcher: /coin toss/i,
   action: function(message, room) {
     var side = (Math.floor(Math.random()*2) == 1 ? 'Heads' : 'Tails');
     room.speak(side + ' is the result Sir.');
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help: 'forecast "Chicago"',
-  matcher: new RegExp('forecast', 'i'),
+  matcher: /forecast/i,
   action:function(message, room) {
     var city = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0].replace(/"/g,'');
     Request.get({host: 'www.google.com', path:'/ig/api?weather=' + city}, function(data) {
@@ -144,9 +130,9 @@ duckworth.addResponse({
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help: 'build status',
-  matcher: new RegExp('build status', 'i'),
+  matcher: /build status/i,
   action:function(message, room) {
     var results = {builder1:false, builder2:true},
         status = '';
@@ -178,9 +164,9 @@ duckworth.addResponse({
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help:'stock "GOOG"',
-  matcher: new RegExp('stock', 'i'),
+  matcher: /stock/i,
   action: function(message, room) {
     var stock = message.body.match(/"(?:[^\\"]+|\\.)*"/)[0].replace(/"/g,'');
     Request.get({host:'www.google.com', path:'/ig/api?stock=' + stock}, function(data) {
@@ -195,17 +181,17 @@ duckworth.addResponse({
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help:"",
-  matcher: new RegExp('hello', 'i'),
+  matcher: /hello/i,
   action: function(message, room) {
     room.speak("Hello sir, how many I be of service?");
   }
 });
 
-duckworth.addResponse({
+duckworth.addResponder({
   help: "",
-  matcher: new RegExp('thanks', 'i'),
+  matcher: /thanks/i,
   action: function(message, room) {
     room.speak("My duty is to serve you sir.");
   }
