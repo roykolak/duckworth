@@ -20,7 +20,7 @@ duckworth.addPerformer({
 
     var time = new Date();
     if(time.getMinutes() === 0) {
-      duckworth.speak("The time is now " + convertToStandardTime(time.getHours()) + ' o\'clock.', room);
+      room.speak("The time is now " + convertToStandardTime(time.getHours()) + ' o\'clock.', room);
     }
   }
 });
