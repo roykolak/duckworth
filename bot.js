@@ -1,6 +1,6 @@
 Bot = function Bot(apiKey, group) {
   var tasks = [], responses = [], observers = [];
-  var client;
+  var client, me;
 
   function assembleHelp() {
     var message = '';
@@ -13,23 +13,29 @@ Bot = function Bot(apiKey, group) {
   return {
     start: function() {
       client = require("ranger").createClient(group, apiKey);
+      client.me(function(user) { me = user; });
 
       var self = this;
       client.rooms(function(rooms) {
         rooms.forEach(function(room) {
           room.join(function() {
-            setInterval(function() {
-              self.matchTask(room);
-            }, 50000);
-
-            room.listen(function(message) {
-              if(message.body !== null) {
-                self.matchMessage(message, room);
-                self.matchObserver(message, room);
-              }
-            });
+            self.monitor(room);
           });
         });
+      });
+    },
+
+    monitor: function(room) {
+      var self = this;
+      setInterval(function() {
+        self.matchTask(room);
+      }, 50000);
+
+      room.listen(function(message) {
+        if(message.body !== null) {
+          self.matchMessage(message, room);
+          self.matchObserver(message, room);
+        }
       });
     },
 
@@ -63,11 +69,13 @@ Bot = function Bot(apiKey, group) {
     },
 
     matchObserver: function(message, room) {
-      observers.forEach(function(observer) {
-        if(message.body.match(observer.matcher)) {
-          observer.action(message, room);
-        }
-      });
+      if(message.userId != me.id) {
+        observers.forEach(function(observer) {
+          if(message.body.match(observer.matcher)) {
+            observer.action(message, room);
+          }
+        });
+      }
     },
 
     matchTask: function(room) {
